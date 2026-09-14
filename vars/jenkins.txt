@@ -1,0 +1,9 @@
+@Library('django-shared-library') _
+
+djangoDeploy(
+    workspacePath: '/home/osianlap07/Practice/Test_Need',
+    credentialsId: 'django-env-file',
+    repoUrl: 'https://repo.osian.io/osianinfotech/edelweiss-tokio/etli-need-analysis-backend.git',
+    repoCreds: 'osian-repo-credentials',
+    serviceName: 'etli-need.service'
+)
