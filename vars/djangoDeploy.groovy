@@ -50,7 +50,17 @@ def call(Map config = [:]) {
                 }
             }
 
-            stage('Start Production Service') {
+            // stage('Start Production Service') {
+            //     steps {
+            //         dir(workspacePath) {
+            //             sh """
+            //                 sudo systemctl restart ${serviceName}
+            //             """
+            //         }
+            //     }
+            // }
+
+            stage('Start Local Service') {
                 steps {
                     dir(workspacePath) {
                         sh """
