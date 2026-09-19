@@ -9,10 +9,6 @@ def call(Map config = [:]) {
     pipeline {
         agent any
 
-        environment {
-            SONAR_HOME = tool "${sonarServer}"
-        }
-
         stages {
             stage('Checkout Code') {
                 steps {
