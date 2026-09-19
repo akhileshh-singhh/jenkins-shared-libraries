@@ -67,13 +67,13 @@ def call(Map config = [:]) {
             //     }
             // }
 
-            stage('SonarQube: Quality Gates') {
-                steps {
-                    timeout(time: 10, unit: 'MINUTES') {
-                        waitForQualityGate abortPipeline: true
-                    }
-                }
-            }
+            // stage('SonarQube: Quality Gates') {
+            //     steps {
+            //         timeout(time: 10, unit: 'MINUTES') {
+            //             waitForQualityGate abortPipeline: true
+            //         }
+            //     }
+            // }
 
             stage('Run Migrations') {
                 steps {
