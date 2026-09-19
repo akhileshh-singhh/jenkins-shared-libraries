@@ -87,7 +87,7 @@ def call(Map config = [:]) {
 
             stage('Restart Docker Service') {
                 steps {
-                    dir(workspacePath) {
+                    dir('/home/osianlap07/Projects/Need_Analysis') {
                         sh '''
                             docker compose restart || docker-compose restart
                         '''
