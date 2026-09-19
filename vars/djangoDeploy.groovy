@@ -44,7 +44,7 @@ def call(Map config = [:]) {
             stage('OWASP: Dependency Check') {
                 steps {
                     dir(workspacePath) {
-                        dependencyCheck additionalArguments: '--scan . --disableAssembly', odcInstallation: 'Default'
+                        dependencyCheck additionalArguments: '--scan . --disableAssembly --noupdate', odcInstallation: 'OWASP'
                         dependencyCheckPublisher pattern: 'dependency-check-report.xml'
                     }
                 }
