@@ -1,12 +1,17 @@
 def call(Map config = [:]) {
-    def workspacePath = config.workspacePath ?: '/home/osianlap07/Practice/Test_Need'
+    def workspacePath = config.workspacePath ?: '/home/osianlap07/Projects/Need_Analysis/etli-need-analysis-backend'
+    def rootPath = '/home/osianlap07/Projects/Need_Analysis'
     def credentialsId = config.credentialsId ?: 'django-env-file'
     def repoUrl = config.repoUrl ?: 'https://repo.osian.io/osianinfotech/edelweiss-tokio/etli-need-analysis-backend.git'
     def repoCreds = config.repoCreds ?: 'osian-repo-credentials'
-    def serverPort = config.serverPort ?: '8000'
+    def sonarServer = config.sonarServer ?: 'MySonarServer'
 
     pipeline {
         agent any
+
+        environment {
+            SONAR_HOME = tool "${sonarServer}"
+        }
 
         stages {
             stage('Checkout Code') {
@@ -39,7 +44,41 @@ def call(Map config = [:]) {
                     }
                 }
             }
-            
+
+            stage('OWASP: Dependency Check') {
+                steps {
+                    dir(workspacePath) {
+                        dependencyCheck additionalArguments: '--scan . --disableAssembly', odcInstallation: 'Default'
+                        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+                    }
+                }
+            }
+
+            stage('SonarQube: Code Analysis') {
+                steps {
+                    dir(workspacePath) {
+                        withSonarQubeEnv("${sonarServer}") {
+                            sh '''
+                                ./venv/bin/pip install sonar-scanner || true
+                                sonar-scanner \
+                                  -Dsonar.projectKey=etli-need-analysis-backend \
+                                  -Dsonar.projectName=etli-need-analysis-backend \
+                                  -Dsonar.sources=. \
+                                  -Dsonar.exclusions=**/venv/**,**/staticfiles/**,**/media/**
+                            '''
+                        }
+                    }
+                }
+            }
+
+            stage('SonarQube: Quality Gates') {
+                steps {
+                    timeout(time: 10, unit: 'MINUTES') {
+                        waitForQualityGate abortPipeline: true
+                    }
+                }
+            }
+
             stage('Run Migrations') {
                 steps {
                     dir(workspacePath) {
@@ -50,22 +89,12 @@ def call(Map config = [:]) {
                 }
             }
 
-            // stage('Start Production Service') {
-            //     steps {
-            //         dir(workspacePath) {
-            //             sh """
-            //                 sudo systemctl restart ${serviceName}
-            //             """
-            //         }
-            //     }
-            // }
-
-            stage('Start Local Service') {
+            stage('Restart Docker Service') {
                 steps {
-                    dir(workspacePath) {
-                        sh """
-                            BUILD_ID=dontKillMe nohup ./venv/bin/python manage.py runserver 0.0.0.0:${serverPort} > server.log 2>&1 &
-                        """
+                    dir(rootPath) {
+                        sh '''
+                            docker compose up -d --build etli-backend-service
+                        '''
                     }
                 }
             }
@@ -73,10 +102,10 @@ def call(Map config = [:]) {
 
         post {
             success {
-                echo 'Production deployment completed securely with all environment variables loaded!'
+                echo 'CI security gates passed and Docker Compose service updated successfully!'
             }
             failure {
-                echo 'Deployment failed. Check console output for details.'
+                echo 'Pipeline failed during security scanning or deployment. Check console output for details.'
             }
         }
     }
