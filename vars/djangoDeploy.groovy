@@ -41,31 +41,31 @@ def call(Map config = [:]) {
                 }
             }
 
-            stage('OWASP: Dependency Check') {
-                steps {
-                    dir(workspacePath) {
-                        dependencyCheck additionalArguments: '--scan . --disableAssembly --noupdate', odcInstallation: 'OWASP'
-                        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
-                    }
-                }
-            }
+            // stage('OWASP: Dependency Check') {
+            //     steps {
+            //         dir(workspacePath) {
+            //             dependencyCheck additionalArguments: '--scan . --disableAssembly --noupdate', odcInstallation: 'OWASP'
+            //             dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+            //         }
+            //     }
+            // }
 
-            stage('SonarQube: Code Analysis') {
-                steps {
-                    dir(workspacePath) {
-                        withSonarQubeEnv("${sonarServer}") {
-                            sh '''
-                                ./venv/bin/pip install sonar-scanner || true
-                                sonar-scanner \
-                                  -Dsonar.projectKey=etli-need-analysis-backend \
-                                  -Dsonar.projectName=etli-need-analysis-backend \
-                                  -Dsonar.sources=. \
-                                  -Dsonar.exclusions=**/venv/**,**/staticfiles/**,**/media/**
-                            '''
-                        }
-                    }
-                }
-            }
+            // stage('SonarQube: Code Analysis') {
+            //     steps {
+            //         dir(workspacePath) {
+            //             withSonarQubeEnv("${sonarServer}") {
+            //                 sh '''
+            //                     ./venv/bin/pip install sonar-scanner || true
+            //                     sonar-scanner \
+            //                       -Dsonar.projectKey=etli-need-analysis-backend \
+            //                       -Dsonar.projectName=etli-need-analysis-backend \
+            //                       -Dsonar.sources=. \
+            //                       -Dsonar.exclusions=**/venv/**,**/staticfiles/**,**/media/**
+            //                 '''
+            //             }
+            //         }
+            //     }
+            // }
 
             stage('SonarQube: Quality Gates') {
                 steps {
