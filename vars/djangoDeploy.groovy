@@ -87,9 +87,9 @@ def call(Map config = [:]) {
 
             stage('Restart Docker Service') {
                 steps {
-                    dir(rootPath) {
+                    dir(workspacePath) {
                         sh '''
-                            docker compose up -d --build etli-backend-service
+                            docker compose restart || docker-compose restart
                         '''
                     }
                 }
