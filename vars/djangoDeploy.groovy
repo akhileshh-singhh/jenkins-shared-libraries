@@ -41,39 +41,41 @@ def call(Map config = [:]) {
                 }
             }
 
-            // stage('OWASP: Dependency Check') {
-            //     steps {
-            //         dir(workspacePath) {
-            //             dependencyCheck additionalArguments: '--scan . --disableAssembly --noupdate', odcInstallation: 'OWASP'
-            //             dependencyCheckPublisher pattern: 'dependency-check-report.xml'
-            //         }
-            //     }
-            // }
+            stage('OWASP: Dependency Check') {
+                steps {
+                    dir(workspacePath) {
+                        withCredentials([string(credentialsId: 'nvd-api-key-id', variable: 'NVD_API_KEY')]) {
+                            dependencyCheck additionalArguments: "--scan . --disableAssembly --nvdApiKey ${env.NVD_API_KEY}", odcInstallation: 'Default'
+                        }
+                        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+                    }
+                }
+            }
 
-            // stage('SonarQube: Code Analysis') {
-            //     steps {
-            //         dir(workspacePath) {
-            //             withSonarQubeEnv("${sonarServer}") {
-            //                 sh '''
-            //                     ./venv/bin/pip install sonar-scanner || true
-            //                     sonar-scanner \
-            //                       -Dsonar.projectKey=etli-need-analysis-backend \
-            //                       -Dsonar.projectName=etli-need-analysis-backend \
-            //                       -Dsonar.sources=. \
-            //                       -Dsonar.exclusions=**/venv/**,**/staticfiles/**,**/media/**
-            //                 '''
-            //             }
-            //         }
-            //     }
-            // }
+            stage('SonarQube: Code Analysis') {
+                steps {
+                    dir(workspacePath) {
+                        withSonarQubeEnv("${sonarServer}") {
+                            sh '''
+                                ./venv/bin/pip install sonar-scanner || true
+                                sonar-scanner \
+                                  -Dsonar.projectKey=etli-need-analysis-backend \
+                                  -Dsonar.projectName=etli-need-analysis-backend \
+                                  -Dsonar.sources=. \
+                                  -Dsonar.exclusions=**/venv/**,**/staticfiles/**,**/media/**
+                            '''
+                        }
+                    }
+                }
+            }
 
-            // stage('SonarQube: Quality Gates') {
-            //     steps {
-            //         timeout(time: 10, unit: 'MINUTES') {
-            //             waitForQualityGate abortPipeline: true
-            //         }
-            //     }
-            // }
+            stage('SonarQube: Quality Gates') {
+                steps {
+                    timeout(time: 10, unit: 'MINUTES') {
+                        waitForQualityGate abortPipeline: true
+                    }
+                }
+            }
 
             stage('Run Migrations') {
                 steps {
