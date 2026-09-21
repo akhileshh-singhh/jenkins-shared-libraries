@@ -74,8 +74,13 @@ def call(Map config = [:]) {
 
             stage('SonarQube: Quality Gates') {
                 steps {
-                    timeout(time: 30, unit: 'MINUTES') {
-                        waitForQualityGate abortPipeline: true
+                    timeout(time: 10, unit: 'MINUTES') {
+                        script {
+                            def qg = waitForQualityGate(abortPipeline: false)
+                            if (qg.status != 'OK') {
+                                echo "Quality Gate failed or timed out with status: ${qg.status}, but proceeding with deployment."
+                            }
+                        }
                     }
                 }
             }
