@@ -45,7 +45,7 @@ def call(Map config = [:]) {
                 steps {
                     dir(workspacePath) {
                         withCredentials([string(credentialsId: 'nvd-api-key-id', variable: 'NVD_API_KEY')]) {
-                            dependencyCheck additionalArguments: "--scan . --disableAssembly --nvdApiKey ${env.NVD_API_KEY}", odcInstallation: 'Default'
+                            dependencyCheck additionalArguments: "--scan . --disableAssembly --nvdApiKey ${env.NVD_API_KEY}", odcInstallation: 'OWASP'
                         }
                         dependencyCheckPublisher pattern: 'dependency-check-report.xml'
                     }
