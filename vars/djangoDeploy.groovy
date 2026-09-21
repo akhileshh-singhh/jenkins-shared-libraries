@@ -74,7 +74,7 @@ def call(Map config = [:]) {
 
             stage('SonarQube: Quality Gates') {
                 steps {
-                    timeout(time: 10, unit: 'MINUTES') {
+                    timeout(time: 30, unit: 'MINUTES') {
                         waitForQualityGate abortPipeline: true
                     }
                 }
