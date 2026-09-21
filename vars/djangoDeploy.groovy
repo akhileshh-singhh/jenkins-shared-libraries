@@ -64,7 +64,7 @@ def call(Map config = [:]) {
                                       -Dsonar.projectKey=etli-need-analysis-backend \
                                       -Dsonar.projectName=etli-need-analysis-backend \
                                       -Dsonar.sources=. \
-                                      -Dsonar.exclusions=**/venv/**,**/staticfiles/**,**/media/**
+                                      -Dsonar.exclusions=**/venv/**,**/staticfiles/**,**/media/**,**/certificate_pdf/templates/**,**/migrations/**
                                 """
                             }
                         }
