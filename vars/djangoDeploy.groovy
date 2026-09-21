@@ -56,15 +56,17 @@ def call(Map config = [:]) {
                 steps {
                     dir(workspacePath) {
                         withSonarQubeEnv("${sonarServer}") {
-                            def scannerHome = tool 'SonarQube' 
-                            
-                            sh """
-                                ${scannerHome}/bin/sonar-scanner \
-                                  -Dsonar.projectKey=etli-need-analysis-backend \
-                                  -Dsonar.projectName=etli-need-analysis-backend \
-                                  -Dsonar.sources=. \
-                                  -Dsonar.exclusions=**/venv/**,**/staticfiles/**,**/media/**
-                            """
+                            script {
+                                def scannerHome = tool 'SonarQube'
+                                
+                                sh """
+                                    ${scannerHome}/bin/sonar-scanner \
+                                      -Dsonar.projectKey=etli-need-analysis-backend \
+                                      -Dsonar.projectName=etli-need-analysis-backend \
+                                      -Dsonar.sources=. \
+                                      -Dsonar.exclusions=**/venv/**,**/staticfiles/**,**/media/**
+                                """
+                            }
                         }
                     }
                 }
