@@ -29,8 +29,18 @@ def call(Map config = [:]) {
                 steps {
                     withCredentials([file(credentialsId: credentialsId, variable: 'ENV_FILE_PATH')]) {
                         sh '''
+                            echo "Current working directory:"
+                            pwd
+                            echo "Listing workspace files:"
+                            ls -la
+                            
+                            # Ensure directory exists explicitly
                             mkdir -p need_analysis_backend
-                            cp $ENV_FILE_PATH need_analysis_backend/.env
+                            
+                            # Copy the environment file
+                            cp "$ENV_FILE_PATH" need_analysis_backend/.env
+                            
+                            # Setup virtual environment and dependencies
                             python3 -m venv venv
                             ./venv/bin/pip install --upgrade pip
                             ./venv/bin/pip install -r requirements.txt
