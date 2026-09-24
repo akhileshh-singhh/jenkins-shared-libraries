@@ -29,18 +29,9 @@ def call(Map config = [:]) {
                 steps {
                     withCredentials([file(credentialsId: credentialsId, variable: 'ENV_FILE_PATH')]) {
                         sh '''
-                            echo "Current working directory:"
-                            pwd
-                            echo "Listing workspace files:"
-                            ls -la
-                            
-                            # Ensure directory exists explicitly
+                            chmod -R +w need_analysis_backend || true
                             mkdir -p need_analysis_backend
-                            
-                            # Copy the environment file
                             cp "$ENV_FILE_PATH" need_analysis_backend/.env
-                            
-                            # Setup virtual environment and dependencies
                             python3 -m venv venv
                             ./venv/bin/pip install --upgrade pip
                             ./venv/bin/pip install -r requirements.txt
@@ -53,7 +44,7 @@ def call(Map config = [:]) {
             stage('OWASP: Dependency Check') {
                 steps {
                     withCredentials([string(credentialsId: 'nvd-api-key-id', variable: 'NVD_API_KEY')]) {
-                        dependencyCheck additionalArguments: "--scan . --disableAssembly --nvdApiKey ${env.NVD_API_KEY}", odcInstallation: 'OWASP'
+                        dependencyCheck additionalArguments: "--scan . --disableAssembly --nvdApiKey ${env.NVD_API_KEY} --data .dependency-check-data", odcInstallation: 'OWASP'
                     }
                     dependencyCheckPublisher pattern: 'dependency-check-report.xml'
                 }
