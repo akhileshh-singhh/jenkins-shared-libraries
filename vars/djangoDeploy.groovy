@@ -93,9 +93,7 @@ def call(Map config = [:]) {
 
             stage('Restart Docker Service') {
                 steps {
-                    sh '''
-                        docker compose restart || docker-compose restart
-                    '''
+                    sh 'docker compose -f docker-compose.yml restart'
                 }
             }
         }
