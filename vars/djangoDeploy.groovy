@@ -93,7 +93,9 @@ def call(Map config = [:]) {
 
             stage('Restart Docker Service') {
                 steps {
-                    sh 'docker compose -f docker-compose.yml restart'
+                    dir('etli-need-analysis-backend') {
+                        sh 'docker compose -f docker-compose.yml restart'
+                    }
                 }
             }
         }
