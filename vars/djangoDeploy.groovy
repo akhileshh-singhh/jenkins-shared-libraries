@@ -103,32 +103,21 @@ def call(Map config = [:]) {
         post {
             success {
                 echo 'CI security gates passed and Docker Compose service updated successfully!'
-                mail(
+                emailext(
                     subject: "SUCCESS: Jenkins Build '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
                     body: "<p>Build and deployment completed successfully for branch <b>${env.BRANCH_NAME}</b>.</p><p>Check console output at: <a href='${env.BUILD_URL}console'>${env.BUILD_URL}console</a></p>",
                     mimeType: 'text/html',
-                    to: 'akhilesh.singh@osiansoftware.com',
-                    properties: [
-                        'mail.smtp.ssl.enable': 'true',
-                        'mail.smtp.socketFactory.port': '465',
-                        'mail.smtp.socketFactory.class': 'javax.net.ssl.SSLSocketFactory',
-                        'mail.smtp.port': '465'
-                    ]
+                    to: 'akhilesh.singh@osiansoftware.com'
                 )
             }
             failure {
                 echo 'Pipeline failed during security scanning or deployment. Check console output for details.'
-                mail(
+                emailext(
                     subject: "FAILED: Jenkins Build '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
                     body: "<p>Pipeline failed during execution for branch <b>${env.BRANCH_NAME}</b>.</p><p>Check console output at: <a href='${env.BUILD_URL}console'>${env.BUILD_URL}console</a></p>",
                     mimeType: 'text/html',
                     to: 'akhilesh.singh@osiansoftware.com',
-                    properties: [
-                        'mail.smtp.ssl.enable': 'true',
-                        'mail.smtp.socketFactory.port': '465',
-                        'mail.smtp.socketFactory.class': 'javax.net.ssl.SSLSocketFactory',
-                        'mail.smtp.port': '465'
-                    ]
+                    attachLog: true
                 )
             }
         }
