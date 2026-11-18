@@ -107,7 +107,13 @@ def call(Map config = [:]) {
                     subject: "SUCCESS: Jenkins Build '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
                     body: "<p>Build and deployment completed successfully for branch <b>${env.BRANCH_NAME}</b>.</p><p>Check console output at: <a href='${env.BUILD_URL}console'>${env.BUILD_URL}console</a></p>",
                     mimeType: 'text/html',
-                    to: 'akhilesh.singh@osiansoftware.com'
+                    to: 'akhilesh.singh@osiansoftware.com',
+                    properties: [
+                        'mail.smtp.ssl.enable': 'true',
+                        'mail.smtp.socketFactory.port': '465',
+                        'mail.smtp.socketFactory.class': 'javax.net.ssl.SSLSocketFactory',
+                        'mail.smtp.port': '465'
+                    ]
                 )
             }
             failure {
@@ -117,7 +123,13 @@ def call(Map config = [:]) {
                     body: "<p>Pipeline failed during execution for branch <b>${env.BRANCH_NAME}</b>.</p><p>Check console output at: <a href='${env.BUILD_URL}console'>${env.BUILD_URL}console</a></p>",
                     mimeType: 'text/html',
                     to: 'akhilesh.singh@osiansoftware.com',
-                    attachLog: true
+                    attachLog: true,
+                    properties: [
+                        'mail.smtp.ssl.enable': 'true',
+                        'mail.smtp.socketFactory.port': '465',
+                        'mail.smtp.socketFactory.class': 'javax.net.ssl.SSLSocketFactory',
+                        'mail.smtp.port': '465'
+                    ]
                 )
             }
         }
