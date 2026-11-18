@@ -100,14 +100,15 @@ def call(Map config = [:]) {
             }
         }
 
-        post {
+       post {
             success {
                 echo 'CI security gates passed and Docker Compose service updated successfully!'
                 emailext(
                     subject: "SUCCESS: Jenkins Build '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
                     body: "<p>Build and deployment completed successfully for branch <b>${env.BRANCH_NAME}</b>.</p><p>Check console output at: <a href='${env.BUILD_URL}console'>${env.BUILD_URL}console</a></p>",
                     mimeType: 'text/html',
-                    to: 'akhilesh.singh@osiansoftware.com' 
+                    to: 'akhilesh.singh@osiansoftware.com',
+                    mailType: 'success'
                 )
             }
             failure {
@@ -117,7 +118,8 @@ def call(Map config = [:]) {
                     body: "<p>Pipeline failed during execution for branch <b>${env.BRANCH_NAME}</b>.</p><p>Check console output at: <a href='${env.BUILD_URL}console'>${env.BUILD_URL}console</a></p>",
                     mimeType: 'text/html',
                     to: 'akhilesh.singh@osiansoftware.com',
-                    attachLog: true
+                    attachLog: true,
+                    mailType: 'failure'
                 )
             }
         }
