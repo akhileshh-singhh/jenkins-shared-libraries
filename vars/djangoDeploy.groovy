@@ -90,10 +90,10 @@ def call(Map config = [:]) {
                     '''
                 }
             }
-
+            
             stage('Restart Docker Service') {
                 steps {
-                    sh 'docker compose -f ../docker-compose.yml restart'
+                    sh 'docker compose -f /home/osianlap07/Projects/Need_Analysis/docker-compose.yml restart'
                 }
             }
         }
