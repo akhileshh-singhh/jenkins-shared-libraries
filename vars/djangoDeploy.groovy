@@ -100,7 +100,14 @@ def call(Map config = [:]) {
 
         post {
             success {
-                echo 'CI security gates passed and Docker Compose service updated successfully!'
+                echo 'CI security gates passed! Triggering deployment pipeline...'
+                
+                build job: 'Need Jenkins Deploy', 
+                      parameters: [
+                          string(name: 'BRANCH_NAME', value: "${env.BRANCH_NAME}")
+                      ],
+                      wait: false // Set to true if you want CI to wait for deployment to finish
+
                 emailext(
                     subject: "SUCCESS: Jenkins Build '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
                     body: "<p>Build and deployment completed successfully for branch <b>${env.BRANCH_NAME}</b>.</p><p>Check console output at: <a href='${env.BUILD_URL}console'>${env.BUILD_URL}console</a></p>",
